@@ -14,9 +14,12 @@ Ravintolat:
 
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
 import re
 import logging
+
+# Suomen aikavyohyke (UTC+2, kesaaikana UTC+3)
+FINLAND_TZ = timezone(timedelta(hours=2))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,12 +34,17 @@ WEEKDAYS_FI = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "L
 WEEKDAYS_FI_LOWER = [d.lower() for d in WEEKDAYS_FI]
 
 
+def _today_finland():
+    """Palauttaa tanaan paivan Suomen ajassa."""
+    return datetime.now(FINLAND_TZ).date()
+
+
 def get_today_weekday_fi():
-    return WEEKDAYS_FI[date.today().weekday()]
+    return WEEKDAYS_FI[_today_finland().weekday()]
 
 
 def get_today_weekday_index():
-    return date.today().weekday()
+    return _today_finland().weekday()
 
 
 def _safe_request(url, timeout=15):
@@ -467,14 +475,15 @@ def _make_result(name, address, source, menu, url, hours, price_info):
 
 def fetch_all_restaurants():
     """Hakee kaikkien 7 ravintolan paivan lounaslistat."""
-    today = date.today()
+    today = _today_finland()
+    now_fi = datetime.now(FINLAND_TZ)
 
     if today.weekday() >= 5:
         return {
             "restaurants": [],
             "date": today.strftime("%d.%m.%Y"),
             "weekday": get_today_weekday_fi(),
-            "fetch_time": datetime.now().strftime("%H:%M"),
+            "fetch_time": now_fi.strftime("%H:%M"),
             "message": "Viikonloppuna ei lounaslistoja saatavilla. Tule takaisin maanantaina!",
         }
 
@@ -501,7 +510,7 @@ def fetch_all_restaurants():
         "restaurants": restaurants,
         "date": today.strftime("%d.%m.%Y"),
         "weekday": get_today_weekday_fi(),
-        "fetch_time": datetime.now().strftime("%H:%M"),
+        "fetch_time": now_fi.strftime("%H:%M"),
         "message": None,
     }
 

@@ -4,7 +4,7 @@ Hakee ja näyttää päivän lounaslistat Ruoholahdenkatu 21:n lähiravintoloist
 """
 
 from flask import Flask, render_template, jsonify
-from scrapers import fetch_all_restaurants
+from scrapers import fetch_all_restaurants, FINLAND_TZ
 from datetime import datetime, date
 
 app = Flask(__name__)
@@ -16,8 +16,8 @@ CACHE_TTL_SECONDS = 1800  # 30 minuuttia
 
 def get_cached_restaurants():
     """Hakee ravintoladata välimuistista tai päivittää sen."""
-    now = datetime.now()
-    today = date.today()
+    now = datetime.now(FINLAND_TZ)
+    today = now.date()
 
     if (
         _cache["data"] is not None
