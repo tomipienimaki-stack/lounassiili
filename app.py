@@ -5,21 +5,24 @@ Hakee ja näyttää päivän lounaslistat Ruoholahdenkatu 21:n lähiravintoloist
 
 from flask import Flask, render_template, jsonify
 from scrapers import fetch_all_restaurants
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 
-# Välimuisti - haetaan data max kerran per 30 min
-_cache = {"data": None, "timestamp": None}
+# Välimuisti - haetaan data max kerran per 30 min, nollautuu päivän vaihtuessa
+_cache = {"data": None, "timestamp": None, "date": None}
 CACHE_TTL_SECONDS = 1800  # 30 minuuttia
 
 
 def get_cached_restaurants():
     """Hakee ravintoladata välimuistista tai päivittää sen."""
     now = datetime.now()
+    today = date.today()
+
     if (
         _cache["data"] is not None
         and _cache["timestamp"] is not None
+        and _cache["date"] == today
         and (now - _cache["timestamp"]).total_seconds() < CACHE_TTL_SECONDS
     ):
         return _cache["data"]
@@ -27,6 +30,7 @@ def get_cached_restaurants():
     data = fetch_all_restaurants()
     _cache["data"] = data
     _cache["timestamp"] = now
+    _cache["date"] = today
     return data
 
 
@@ -54,6 +58,6 @@ def refresh():
 
 
 if __name__ == "__main__":
-    print("\nRuoholahden Lounas -sovellus kaynnistyy...")
+    print("\nLounasSiili kaynnistyy...")
     print("   Avaa selaimessa: http://localhost:5000\n")
     app.run(debug=True, host="0.0.0.0", port=5000)
