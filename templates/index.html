@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LounasSiili</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .header-logo {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .header .date-info {
+            margin-top: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .toolbar .count {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .toolbar .refresh-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .toolbar .refresh-btn:hover {
+            background: #e55a2b;
+        }
+
+        .message-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .restaurant-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .card-header .name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .card-header .name a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .card-header .name a:hover {
+            color: #ff6b35;
+        }
+
+        .card-header .meta {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        .card-header .meta .address {
+            display: block;
+        }
+
+        .card-header .meta .hours {
+            display: inline-block;
+            margin-top: 0.2rem;
+            color: #4caf50;
+            font-weight: 500;
+        }
+
+        .card-header .badge {
+            flex-shrink: 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.7rem;
+            border-radius: 12px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            white-space: nowrap;
+        }
+
+        .card-header .price-badge {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .card-body {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .menu-list {
+            list-style: none;
+        }
+
+        .menu-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .menu-list li:last-child {
+            border-bottom: none;
+        }
+
+        .menu-list .food-name {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .menu-list .food-price {
+            flex-shrink: 0;
+            font-weight: 600;
+            color: #ff6b35;
+            font-size: 0.9rem;
+        }
+
+        .no-menu {
+            color: #999;
+            font-style: italic;
+            padding: 0.5rem 0;
+        }
+
+        .source-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus {
+            border-color: #ff6b35;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.5rem; }
+            .header-logo { width: 36px; height: 36px; }
+            .container { padding: 1rem 0.75rem; }
+            .card-header { padding: 1rem; }
+            .card-body { padding: 0.75rem 1rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Siili (hedgehog) icon -->
+                <ellipse cx="50" cy="62" rx="35" ry="25" fill="rgba(255,255,255,0.9)"/>
+                <!-- Spines -->
+                <line x1="50" y1="37" x2="50" y2="12" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="38" y1="40" x2="30" y2="16" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="62" y1="40" x2="70" y2="16" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="28" y1="48" x2="14" y2="28" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="72" y1="48" x2="86" y2="28" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="20" y1="58" x2="6" y2="44" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <line x1="80" y1="58" x2="94" y2="44" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <!-- Face -->
+                <ellipse cx="50" cy="65" rx="18" ry="14" fill="rgba(255,255,255,0.95)"/>
+                <!-- Eyes -->
+                <circle cx="43" cy="61" r="3" fill="#1a1a2e"/>
+                <circle cx="57" cy="61" r="3" fill="#1a1a2e"/>
+                <!-- Nose -->
+                <circle cx="50" cy="67" r="2.5" fill="#ff6b35"/>
+                <!-- Mouth -->
+                <path d="M46 71 Q50 74 54 71" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <!-- Feet -->
+                <ellipse cx="38" cy="85" rx="7" ry="4" fill="rgba(255,255,255,0.8)"/>
+                <ellipse cx="62" cy="85" rx="7" ry="4" fill="rgba(255,255,255,0.8)"/>
+            </svg>
+            <h1>LounasSiili</h1>
+        </div>
+        <div class="subtitle">Ruoholahdenkatu 21 &mdash; Siili Solutions</div>
+        {% if data.weekday and data.date %}
+        <div class="date-info">{{ data.weekday }} {{ data.date }}</div>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        {% if data.message %}
+        <div class="message-box">
+            {{ data.message }}
+        </div>
+        {% endif %}
+
+        <div class="toolbar">
+            <span class="count">
+                {% if data.restaurants %}
+                    {{ data.restaurants|length }} ravintolaa l&ouml;ydetty
+                    {% if data.fetch_time %}&middot; p&auml;ivitetty {{ data.fetch_time }}{% endif %}
+                {% endif %}
+            </span>
+            <a href="/refresh" class="refresh-btn">P&auml;ivit&auml;</a>
+        </div>
+
+        {% if data.restaurants %}
+        <input type="text" class="search-box" placeholder="Hae ravintolaa tai ruokaa..." id="searchInput" oninput="filterCards()">
+        {% endif %}
+
+        <div id="cards">
+        {% for restaurant in data.restaurants %}
+        <div class="restaurant-card" data-search="{{ restaurant.name|lower }} {{ restaurant.get('address', '')|lower }} {% for item in restaurant.menu %}{{ item.food|lower }} {% endfor %}">
+            <div class="card-header">
+                <div>
+                    <div class="name">
+                        {% if restaurant.url %}
+                        <a href="{{ restaurant.url }}" target="_blank" rel="noopener">{{ restaurant.name }}</a>
+                        {% else %}
+                        {{ restaurant.name }}
+                        {% endif %}
+                    </div>
+                    <div class="meta">
+                        {% if restaurant.address %}
+                        <span class="address">{{ restaurant.address }}</span>
+                        {% endif %}
+                        {% if restaurant.hours %}
+                        <span class="hours">{{ restaurant.hours }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    {% if restaurant.price_info %}
+                    <span class="badge price-badge">{{ restaurant.price_info }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                {% if restaurant.menu %}
+                <ul class="menu-list">
+                    {% for item in restaurant.menu %}
+                    <li>
+                        <span class="food-name">{{ item.food }}</span>
+                        {% if item.price %}
+                        <span class="food-price">{{ item.price }}</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="no-menu">Lounaslistaa ei saatavilla - <a href="{{ restaurant.url }}" target="_blank">katso ravintolan sivuilta</a></p>
+                {% endif %}
+                <span class="source-tag">L&auml;hde: {{ restaurant.source }}</span>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    <div class="footer">
+        LounasSiili &middot; Data haetaan ravintoloiden verkkosivuilta
+    </div>
+
+    <script>
+        function filterCards() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.restaurant-card');
+            cards.forEach(card => {
+                const text = card.getAttribute('data-search');
+                card.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
