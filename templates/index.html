@@ -26,24 +26,10 @@
             box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
         }
 
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .header-logo {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
         .header h1 {
             font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0;
+            margin-bottom: 0.3rem;
         }
 
         .header .subtitle {
@@ -250,7 +236,7 @@
 
         @media (max-width: 600px) {
             .header h1 { font-size: 1.5rem; }
-            .header-logo { width: 36px; height: 36px; }
+
             .container { padding: 1rem 0.75rem; }
             .card-header { padding: 1rem; }
             .card-body { padding: 0.75rem 1rem 1rem; }
@@ -259,33 +245,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-top">
-            <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Siili (hedgehog) icon -->
-                <ellipse cx="50" cy="62" rx="35" ry="25" fill="rgba(255,255,255,0.9)"/>
-                <!-- Spines -->
-                <line x1="50" y1="37" x2="50" y2="12" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="38" y1="40" x2="30" y2="16" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="62" y1="40" x2="70" y2="16" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="28" y1="48" x2="14" y2="28" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="72" y1="48" x2="86" y2="28" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="20" y1="58" x2="6" y2="44" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <line x1="80" y1="58" x2="94" y2="44" stroke="white" stroke-width="4" stroke-linecap="round"/>
-                <!-- Face -->
-                <ellipse cx="50" cy="65" rx="18" ry="14" fill="rgba(255,255,255,0.95)"/>
-                <!-- Eyes -->
-                <circle cx="43" cy="61" r="3" fill="#1a1a2e"/>
-                <circle cx="57" cy="61" r="3" fill="#1a1a2e"/>
-                <!-- Nose -->
-                <circle cx="50" cy="67" r="2.5" fill="#ff6b35"/>
-                <!-- Mouth -->
-                <path d="M46 71 Q50 74 54 71" stroke="#1a1a2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-                <!-- Feet -->
-                <ellipse cx="38" cy="85" rx="7" ry="4" fill="rgba(255,255,255,0.8)"/>
-                <ellipse cx="62" cy="85" rx="7" ry="4" fill="rgba(255,255,255,0.8)"/>
-            </svg>
-            <h1>LounasSiili</h1>
-        </div>
+        <h1>LounasSiili</h1>
         <div class="subtitle">Ruoholahdenkatu 21 &mdash; Siili Solutions</div>
         {% if data.weekday and data.date %}
         <div class="date-info">{{ data.weekday }} {{ data.date }}</div>
