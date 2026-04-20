@@ -1,7 +1,6 @@
 // Ruoholahden Lounas - Frontend
 
 let menuData = null;
-let activeFilter = 'all';
 
 // Hae lounaslistat APIsta
 async function fetchMenus() {
@@ -50,8 +49,7 @@ function renderMenus() {
     .sort(([a], [b]) => Number(a) - Number(b))
     .map(([, zone]) => {
       const cards = zone.restaurants.map(restaurant => {
-        const filteredItems = filterItems(restaurant.menu?.items || []);
-        return renderCard(restaurant, filteredItems);
+        return renderCard(restaurant, restaurant.menu?.items || []);
       }).join('');
 
       return `
@@ -90,18 +88,6 @@ function renderCard(restaurant, filteredItems) {
   `;
 }
 
-// Suodata annokset ruokavalion mukaan
-function filterItems(items) {
-  if (activeFilter === 'all') return items;
-
-  return items.filter(item => {
-    if (!item.diets || item.diets.length === 0) return false;
-    return item.diets.some(diet =>
-      diet.toLowerCase().includes(activeFilter.toLowerCase())
-    );
-  });
-}
-
 // Renderöi yksittäisen ravintolan annokset
 function renderMenuItems(items, restaurant) {
   if (restaurant.status === 'error') {
@@ -116,9 +102,6 @@ function renderMenuItems(items, restaurant) {
   }
 
   if (!items || items.length === 0) {
-    if (activeFilter !== 'all') {
-      return `<p class="no-menu">Ei ${activeFilter} annoksia tänään.</p>`;
-    }
     return `<p class="no-menu">Ei lounaslistaa saatavilla. <a href="${restaurant.url}" target="_blank" rel="noopener">Katso ravintolan sivulta</a></p>`;
   }
 
@@ -136,20 +119,6 @@ function renderMenuItems(items, restaurant) {
       `).join('')}
     </ul>
   `;
-}
-
-// Suodatinnapit
-function setupFilters() {
-  const buttons = document.querySelectorAll('.filter-btn');
-
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter;
-      renderMenus();
-    });
-  });
 }
 
 // Päivitä-nappi
@@ -174,7 +143,6 @@ function setupRefresh() {
 
 // Alusta sovellus
 document.addEventListener('DOMContentLoaded', () => {
-  setupFilters();
   setupRefresh();
   fetchMenus();
 });
