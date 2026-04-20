@@ -1,6 +1,7 @@
-// Ruoholahden Lounas - Frontend
+// Lounassiili - Frontend
 
 let menuData = null;
+let currentLocation = 'ruoholahti';
 
 // Hae lounaslistat APIsta
 async function fetchMenus() {
@@ -25,18 +26,33 @@ function updateLastUpdated() {
   }
 }
 
+// Paikkakuntavalitsin
+function setupLocationTabs() {
+  document.querySelectorAll('.loc-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.loc-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentLocation = btn.dataset.loc;
+      if (menuData) renderMenus();
+    });
+  });
+}
+
 // Renderöi ravintolakortit vyöhykkeittäin
 function renderMenus() {
   const container = document.getElementById('restaurants');
 
-  if (!menuData?.menus?.length) {
-    container.innerHTML = '<p class="no-menu">Ei lounaslistoja saatavilla.</p>';
+  // Suodata valitun paikkakunnan ravintolat
+  const locationMenus = (menuData?.menus || []).filter(r => r.location === currentLocation);
+
+  if (!locationMenus.length) {
+    container.innerHTML = '<p class="coming-soon">Tulossa pian — ravintoloita ei ole vielä lisätty.</p>';
     return;
   }
 
   // Ryhmittele ravintolat vyöhykkeen mukaan
   const zones = {};
-  menuData.menus.forEach(restaurant => {
+  locationMenus.forEach(restaurant => {
     const zone = restaurant.zone || 0;
     if (!zones[zone]) {
       zones[zone] = { label: restaurant.zoneLabel || `Vyöhyke ${zone}`, restaurants: [] };
@@ -76,7 +92,7 @@ function renderCard(restaurant, filteredItems) {
       <div class="card-header ${isSameBuilding ? 'same-building' : ''}">
         <div class="restaurant-name">${restaurant.name}</div>
         <div class="restaurant-info">
-          <span>${restaurant.distance}</span>
+          ${restaurant.distance ? `<span>${restaurant.distance}</span>` : ''}
           <span>${restaurant.price}</span>
           <span>${restaurant.hours}</span>
         </div>
@@ -138,6 +154,7 @@ function setupRefresh() {
 
 // Alusta sovellus
 document.addEventListener('DOMContentLoaded', () => {
+  setupLocationTabs();
   setupRefresh();
   fetchMenus();
 });

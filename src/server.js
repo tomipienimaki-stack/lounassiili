@@ -12,9 +12,10 @@ let menuCache = {
   menus: []
 };
 
-// Ravintolatiedot vyöhykkeittäin
-const restaurants = [
-  // ── Vyöhyke 1: Vieressä (0–300 m) ─────────────────────────────────────
+// ── Ruoholahti ───────────────────────────────────────────────────────────────
+
+const ruoholahtiRestaurants = [
+  // Vyöhyke 1: Vieressä (0–300 m)
   {
     id: 'halo',
     name: 'HALO Food & Events',
@@ -84,7 +85,7 @@ const restaurants = [
     zoneLabel: 'Vieressä (0–300 m)'
   },
 
-  // ── Vyöhyke 2: Ruoholahden sydämessä (300–500 m) ──────────────────────
+  // Vyöhyke 2: Ruoholahden sydämessä (300–500 m)
   {
     id: 'sewa',
     name: 'Ravintola Sewa',
@@ -143,7 +144,7 @@ const restaurants = [
     zoneLabel: 'Ruoholahden sydämessä (300–500 m)'
   },
 
-  // ── Vyöhyke 3: Matkalla keskustaan / Malminrinne (550–800 m) ──────────
+  // Vyöhyke 3: Matkalla keskustaan (550–800 m)
   {
     id: 'jumbowl',
     name: 'Ravintola Jumbowl Noodle',
@@ -189,7 +190,7 @@ const restaurants = [
     zoneLabel: 'Matkalla keskustaan (550–800 m)'
   },
 
-  // ── Vyöhyke 4: Hietalahden kauppahalli (500–600 m) ────────────────────
+  // Vyöhyke 4: Hietalahden kauppahalli (500–600 m)
   {
     id: 'chaophraya',
     name: 'Chao Phraya',
@@ -269,6 +270,80 @@ const restaurants = [
   }
 ];
 
+// ── Kangasala ─────────────────────────────────────────────────────────────────
+
+const kangasalaRestaurants = [
+  {
+    id: 'pazzi',
+    name: 'Trattoria Pazzi',
+    address: 'Kangasala',
+    distance: '',
+    price: '~13,50€',
+    hours: 'ma-pe 10:30-15:00',
+    url: 'https://www.pazzi.fi/lounas/',
+    zone: 1,
+    zoneLabel: 'Kangasalan lounaspaikat'
+  },
+  {
+    id: 'zerafiina',
+    name: 'Lounaskahvila Zerafiina',
+    address: 'Kangasala',
+    distance: '',
+    price: '~13,30€',
+    hours: 'ma-pe 10:30-14:00',
+    url: 'https://zerafiina.fi/viikkolounas-kangasala/',
+    zone: 1,
+    zoneLabel: 'Kangasalan lounaspaikat'
+  },
+  {
+    id: 'pepper',
+    name: 'Pepper Bar & Restaurant',
+    address: 'Kangasala',
+    distance: '',
+    price: '~13€',
+    hours: 'ti-pe 11:00-14:00',
+    url: 'https://pepper.fi/lounas-kangasala/',
+    zone: 1,
+    zoneLabel: 'Kangasalan lounaspaikat'
+  },
+  {
+    id: 'jalmari',
+    name: 'Kulttuuriravintola Jalmari',
+    address: 'Kangasalan talo',
+    distance: '',
+    price: '~12,90€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://kangasala-talo.fi/ravintola/lounaslista/',
+    zone: 1,
+    zoneLabel: 'Kangasalan lounaspaikat'
+  },
+  {
+    id: 'paakari',
+    name: 'Ravintola Paakari',
+    address: 'Kangasala',
+    distance: '',
+    price: '~14-29€',
+    hours: 'ti-pe 11:00-14:00',
+    url: 'https://ravintolapaakari.fi/fi/lounas/',
+    zone: 1,
+    zoneLabel: 'Kangasalan lounaspaikat'
+  }
+];
+
+// ── Tampere (paikkavaraus) ────────────────────────────────────────────────────
+
+const tampereRestaurants = [
+  // Tulossa pian
+];
+
+// ── Yhdistetty lista location-kentällä ───────────────────────────────────────
+
+const restaurants = [
+  ...ruoholahtiRestaurants.map(r => ({ ...r, location: 'ruoholahti' })),
+  ...kangasalaRestaurants.map(r => ({ ...r, location: 'kangasala' })),
+  ...tampereRestaurants.map(r => ({ ...r, location: 'tampere' }))
+];
+
 // Hae lounaslistat kaikista ravintoloista
 async function fetchAllMenus() {
   console.log('Haetaan lounaslistoja...');
@@ -344,7 +419,6 @@ app.listen(PORT, async () => {
   console.log(`   Palvelin käynnissä: http://localhost:${PORT}`);
   console.log(`   API: http://localhost:${PORT}/api/menus\n`);
 
-  // Hae lounaslistat käynnistyksen yhteydessä
   await fetchAllMenus();
 });
 

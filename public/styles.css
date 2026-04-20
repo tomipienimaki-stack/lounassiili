@@ -56,6 +56,37 @@ header h1 span {
   margin-top: 0.3rem;
 }
 
+/* ── Paikkakuntavalitsin ─────────────────────────────────────────────────── */
+
+.location-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.85rem;
+}
+
+.loc-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.3rem 0.9rem 0.25rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.loc-tab:hover {
+  color: rgba(255,255,255,0.8);
+}
+
+.loc-tab.active {
+  color: #fff;
+  border-bottom-color: #E8580A;
+}
+
 /* ── Main ────────────────────────────────────────────────────────────── */
 
 main {
@@ -240,6 +271,14 @@ main {
   padding: 3rem;
   color: #9CA3AF;
   font-size: 0.9rem;
+}
+
+.coming-soon {
+  text-align: center;
+  padding: 3rem;
+  color: #9CA3AF;
+  font-size: 0.9rem;
+  font-style: italic;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────── */
