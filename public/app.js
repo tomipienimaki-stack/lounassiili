@@ -110,11 +110,6 @@ function renderMenuItems(items, restaurant) {
       ${items.map(item => `
         <li class="menu-item">
           <div class="menu-item-name">${item.name}</div>
-          ${item.diets?.length ? `
-            <div class="menu-item-diets">
-              ${item.diets.map(diet => `<span class="diet-tag ${diet}">${diet}</span>`).join('')}
-            </div>
-          ` : ''}
         </li>
       `).join('')}
     </ul>
