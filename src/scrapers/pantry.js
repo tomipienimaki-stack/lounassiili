@@ -46,6 +46,7 @@ async function scrapePantry() {
   const $ = cheerio.load(response.data);
   const todayInflected = getTodayDayInflected();
   const items = [];
+  const seen = new Set();
   let inToday = false;
 
   // Käy läpi kaikki elementit järjestyksessä
@@ -72,7 +73,8 @@ async function scrapePantry() {
     const name = text.replace(/\[[^\]]+\]/g, '').trim();
     const diets = parseBracketDiets(text);
 
-    if (name.length >= 5) {
+    if (name.length >= 5 && !seen.has(name)) {
+      seen.add(name);
       items.push({ name, diets });
     }
   });
