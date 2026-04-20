@@ -241,6 +241,13 @@ main {
   padding: 0.75rem 0;
 }
 
+.fixed-menu-note {
+  color: #888;
+  font-size: 0.85rem;
+  font-style: italic;
+  padding: 0.75rem 0;
+}
+
 .no-menu a {
   color: #000;
   font-weight: 600;

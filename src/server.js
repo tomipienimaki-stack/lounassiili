@@ -35,7 +35,9 @@ const restaurants = [
     hours: 'ma-pe 11:00-14:00',
     url: 'https://www.google.com/search?q=place_id://ChIJ-_fGZjUKkkYRdLAert8uAKQ',
     zone: 1,
-    zoneLabel: 'Vieressä (0–300 m)'
+    zoneLabel: 'Vieressä (0–300 m)',
+    fixedMenu: true,
+    fixedMenuNote: 'Turkkilainen lounasbuffet — sama lista joka päivä'
   },
   {
     id: 'gresa',
@@ -102,6 +104,8 @@ const restaurants = [
     price: '~12€',
     hours: 'ma-pe 10:30-20:00',
     url: 'https://www.google.com/search?q=place_id://ChIJTz2C7Z8LkkYRSvS8T2kG-G8',
+    fixedMenu: true,
+    fixedMenuNote: 'Döner-menu — sama lista joka päivä',
     zone: 2,
     zoneLabel: 'Ruoholahden sydämessä (300–500 m)'
   },

@@ -109,7 +109,10 @@ function renderMenuItems(items, restaurant) {
   }
 
   if (restaurant.status === 'not_implemented') {
-    return `<p class="no-menu">Katso lounaslista ravintolan sivulta. <a href="${restaurant.url}" target="_blank" rel="noopener">Avaa sivusto →</a></p>`;
+    if (restaurant.fixedMenu) {
+      return `<p class="fixed-menu-note">${restaurant.fixedMenuNote} <a href="${restaurant.url}" target="_blank" rel="noopener">Katso lista →</a></p>`;
+    }
+    return `<p class="no-menu">Lista vaihtelee — <a href="${restaurant.url}" target="_blank" rel="noopener">katso ravintolan sivulta →</a></p>`;
   }
 
   if (!items || items.length === 0) {
