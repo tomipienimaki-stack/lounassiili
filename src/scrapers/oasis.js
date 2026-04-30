@@ -40,11 +40,16 @@ async function scrapeOasis() {
   const $ = cheerio.load(response.data);
   const todayName = getTodayDayName();
   const items = [];
+  const seen = new Set();
+  let foundOnce = false;
 
   // Etsi tämän päivän lohko: <h3 class="lunch-day-title">Maanantai</h3>
+  // Sivu voi sisältää saman päivän kahdesti (mobiili/desktop) — käsitellään vain ensimmäinen
   $('div.lunch-day').each((_, day) => {
     const title = $(day).find('h3.lunch-day-title').text().trim().toLowerCase();
     if (title !== todayName) return;
+    if (foundOnce) return false; // duplikaattilohko — lopeta
+    foundOnce = true;
 
     $(day).find('ul.lunch-list li.lunch-item').each((_, item) => {
       const text = $(item).text().trim();
@@ -53,7 +58,8 @@ async function scrapeOasis() {
       const name = text.replace(/\([^)]+\)/g, '').trim();
       const diets = parseDiets(text);
 
-      if (name.length >= 4) {
+      if (name.length >= 4 && !seen.has(name)) {
+        seen.add(name);
         items.push({ name, diets });
       }
     });

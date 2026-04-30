@@ -50,7 +50,9 @@ async function scrapeGresa() {
 
     if (underline.length) {
       const dayText = underline.text().trim().toLowerCase();
-      const matchedDay = DAYS_FI.find(d => dayText.startsWith(d));
+      // includes() eikä startsWith() koska joillain päivillä on erikoisotsikko
+      // esim. "Burger-barrikaadi-torstai!" sisältää "torstai" mutta ei aloita sillä
+      const matchedDay = DAYS_FI.find(d => dayText.includes(d));
       if (matchedDay) {
         if (matchedDay === todayName) {
           if (foundOnce) return false; // Lopeta jos nähtiin jo toisen kerran

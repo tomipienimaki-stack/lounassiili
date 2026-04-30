@@ -19,7 +19,6 @@ function getTodayDayName() {
 }
 
 function parseDiets(text) {
-  // Etsi viimeinen sulkulauseke: (G, L) tai (G, M, Ve) tai (L saatavilla G, M, Ve)
   const matches = text.match(/\(([^)]+)\)/g) || [];
   if (!matches.length) return [];
   const last = matches[matches.length - 1].replace(/[()]/g, '');
@@ -27,7 +26,7 @@ function parseDiets(text) {
   return codes
     .map(c => DIET_MAP[c.toLowerCase()])
     .filter(Boolean)
-    .filter((v, i, a) => a.indexOf(v) === i); // uniikki
+    .filter((v, i, a) => a.indexOf(v) === i);
 }
 
 async function scrapeHalo() {
@@ -44,11 +43,22 @@ async function scrapeHalo() {
   let inToday = false;
 
   $('p').each((_, el) => {
-    const underline = $(el).find('u');
+    const $el = $(el);
+    const underline = $el.find('u');
+    const strong = $el.find('strong');
 
+    // ── Päiväotsikko ────────────────────────────────────────────────────
+    // Muoto A: <p><u>Maanantai 28.4.</u></p>
+    // Muoto B: <p>Torstai 30.4.</p>  (ei <u>-tagia)
+    let dayText = '';
     if (underline.length) {
-      // Päiväotsikko: <p><u>Maanantai 20.4.</u></p>
-      const dayText = underline.text().toLowerCase();
+      dayText = underline.text().toLowerCase();
+    } else if (!strong.length) {
+      // Plain <p> ilman <strong> tai <u> — voi olla päiväotsikko
+      dayText = $el.text().trim().toLowerCase();
+    }
+
+    if (dayText) {
       const matchedDay = DAYS_FI.find(d => dayText.startsWith(d));
       if (matchedDay) {
         inToday = (matchedDay === todayName);
@@ -58,20 +68,21 @@ async function scrapeHalo() {
 
     if (!inToday) return;
 
-    const fullText = $(el).text().trim();
-    if (!fullText) return;
+    // ── Annos ────────────────────────────────────────────────────────────
+    // Muoto: <p>PICK IT 14 € <strong>– Annos (G, L)</strong></p>
+    if (!strong.length) return;
 
-    // Jätetään dessert pois
+    const fullText = $el.text().trim();
     if (/^dessert it/i.test(fullText)) return;
 
-    // Annos alkaa "–" tai "-" merkillä (em dash tai tavallinen viiva)
-    const dashIdx = fullText.search(/[–-]/);
+    // Viiva (– tai -) on nyt <strong>-tagin sisällä
+    const strongText = strong.text().trim();
+    const dashIdx = strongText.search(/[–—-]/);
     if (dashIdx === -1) return;
 
-    const itemPart = fullText.substring(dashIdx + 1).trim();
+    const itemPart = strongText.substring(dashIdx + 1).trim();
     if (itemPart.length < 5) return;
 
-    // Poista ruokavaliokoodi-sulkulauseke nimestä
     const name = itemPart.replace(/\([^)]+\)/g, '').trim();
     const diets = parseDiets(itemPart);
 
