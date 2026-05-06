@@ -21,6 +21,25 @@ const pepper        = require('./pepper');
 const jalmari       = require('./jalmari');
 const paakari       = require('./paakari');
 
+// ── Keskusta ──────────────────────────────────────────────────────────────────
+const jumbowl       = require('./jumbowl');
+const shubhakamana   = require('./shubhakamana');
+const kuukuu        = require('./kuukuu');
+const hoku          = require('./hoku');
+const liemi         = require('./liemi');
+const kantin        = require('./kantin');
+const sandro        = require('./sandro');
+const pobre         = require('./pobre');
+const manala        = require('./manala');
+const eka           = require('./eka');
+const missyao       = require('./missyao');
+const eatpoke       = require('./eatpoke');
+const thirdplace     = require('./thirdplace');
+const wrapmaster     = require('./wrapmaster');
+const osteriadeigusti = require('./osteriadeigusti');
+const dagmarbistro   = require('./dagmarbistro');
+const marocco       = require('./marocco');
+
 module.exports = {
   // Ruoholahti
   antell,        // Antell Femma — WordPress REST API
@@ -41,5 +60,24 @@ module.exports = {
   zerafiina,     // Lounaskahvila Zerafiina — lounastaja.app JSON API
   pepper,        // Pepper Bar & Restaurant — lounastaja.app JSON API
   jalmari,       // Kulttuuriravintola Jalmari — kangasala-talo.fi HTML
-  paakari        // Ravintola Paakari — ravintolapaakari.fi HTML
+  paakari,       // Ravintola Paakari — ravintolapaakari.fi HTML
+
+  // Keskusta
+  jumbowl,
+  shubhakamana,
+  kuukuu,
+  hoku,
+  liemi,
+  kantin,
+  sandro,
+  pobre,
+  manala,
+  eka,
+  missyao,
+  eatpoke,
+  thirdplace,
+  wrapmaster,
+  osteriadeigusti,
+  dagmarbistro,
+  marocco
 };

@@ -146,17 +146,6 @@ const ruoholahtiRestaurants = [
 
   // Vyöhyke 3: Matkalla keskustaan (550–800 m)
   {
-    id: 'jumbowl',
-    name: 'Ravintola Jumbowl Noodle',
-    address: 'Malminkatu',
-    distance: '~700m',
-    price: '~12€',
-    hours: 'ma-pe 11:00-15:00',
-    url: 'https://www.google.com/search?q=place_id://ChIJUT9fE20LkkYRRoK9fT3nbj0',
-    zone: 3,
-    zoneLabel: 'Matkalla keskustaan (550–800 m)'
-  },
-  {
     id: 'uyghur',
     name: 'Uyghur Noodle House Kamppi',
     address: 'Kamppi',
@@ -164,17 +153,6 @@ const ruoholahtiRestaurants = [
     price: '~12€',
     hours: 'ma-pe 11:00-20:00',
     url: 'https://www.google.com/search?q=place_id://ChIJf0TJ2qsLkkYRTGKkmsuBk4Y',
-    zone: 3,
-    zoneLabel: 'Matkalla keskustaan (550–800 m)'
-  },
-  {
-    id: 'pompier',
-    name: 'Pompier Albertinkatu',
-    address: 'Albertinkatu 29',
-    distance: '~600m',
-    price: '14,50–19€',
-    hours: 'ma-pe 10:45-14:00',
-    url: 'https://pompier.fi/albertinkatu/',
     zone: 3,
     zoneLabel: 'Matkalla keskustaan (550–800 m)'
   },
@@ -336,10 +314,237 @@ const tampereRestaurants = [
   // Tulossa pian
 ];
 
+// ── Keskusta ──────────────────────────────────────────────────────────────────
+
+const keskustaRestaurants = [
+  // Vyöhyke 1: Aivan naapurissa (0–300 m)
+  {
+    id: 'jumbowl',
+    name: 'Ravintola Jumbowl Noodle (4.6)',
+    address: 'Arkadiankatu 19',
+    distance: '~110m',
+    price: '~13€',
+    hours: 'ma-pe 11:00-15:00',
+    url: 'https://jumbowl.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Käsintehtyjä nuudeleita — lista vaihtelee päivittäin',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'thirdplace',
+    name: 'Third Place Pasta Bar (4.4)',
+    address: 'Arkadiankatu 23',
+    distance: '~160m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:30',
+    url: 'https://www.thirdplace.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Tuorepasta-annoksia',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'wrapmaster',
+    name: 'Wrap Master - Su’s kitchen (4.9)',
+    address: 'Arkadiankatu 19c',
+    distance: '~110m',
+    price: '~13€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.facebook.com/wrapmasterhelsinki',
+    fixedMenu: true,
+    fixedMenuNote: 'Wrappeja ja aasialaista',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'kantin',
+    name: 'Kantin Lunch Club (4.7)',
+    address: 'Arkadiankatu 23',
+    distance: '~160m',
+    price: '~13.50€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.kantin.fi',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'osteriadeigusti',
+    name: 'Osteria dei Gusti (4.7)',
+    address: 'Töölönkatu 1',
+    distance: '~260m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://osteriadeigusti.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Aito italialainen lounas',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'shubhakamana',
+    name: 'Shubha Kamana (4.5)',
+    address: 'Dagmarinkatu 5',
+    distance: '~190m',
+    price: '~13€',
+    hours: 'ma-pe 11:00-14:30',
+    url: 'https://shubhakamana.fi',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'dagmarbistro',
+    name: 'Dagmar Bistro & Wine Bar (4.4)',
+    address: 'Dagmarinkatu 4',
+    distance: '~240m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.dagmarbistro.fi',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+  {
+    id: 'manala',
+    name: 'Manala (4.1)',
+    address: 'Dagmarinkatu 2',
+    distance: '~290m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.botta.fi/manala',
+    zone: 1,
+    zoneLabel: 'Aivan naapurissa (0–300 m)'
+  },
+
+  // Vyöhyke 2: Lyhyen kävelymatkan päässä (alle 500 m)
+  {
+    id: 'pompier',
+    name: 'Pompier Albertinkatu (4.5)',
+    address: 'Albertinkatu 29',
+    distance: '~450m',
+    price: '14,50–19€',
+    hours: 'ma-pe 10:45-14:00',
+    url: 'https://pompier.fi/albertinkatu/',
+    zone: 2,
+    zoneLabel: 'Lyhyen kävelymatkan päässä (alle 500 m)'
+  },
+  {
+    id: 'kuukuu',
+    name: 'Ravintola KuuKuu (4.5)',
+    address: 'Museokatu 17',
+    distance: '~450m',
+    price: '~14€',
+    hours: 'ma-pe 12:00-15:00',
+    url: 'https://www.kuukuu.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Klassinen skandinaavinen lounas',
+    zone: 2,
+    zoneLabel: 'Lyhyen kävelymatkan päässä (alle 500 m)'
+  },
+  {
+    id: 'marocco',
+    name: 'Kahvila Marocco (4.5)',
+    address: 'Museokatu 7',
+    distance: '~400m',
+    price: '~12€',
+    hours: 'ma-pe 10:30-14:00',
+    url: 'https://www.lounaat.info/lounas/kahvila-marocco/helsinki',
+    zone: 2,
+    zoneLabel: 'Lyhyen kävelymatkan päässä (alle 500 m)'
+  },
+  {
+    id: 'eka',
+    name: 'Ravintola Eka (4.3)',
+    address: 'Museokatu 29',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.ravintolaeka.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Kortteliravintolan makuja',
+    zone: 2,
+    zoneLabel: 'Lyhyen kävelymatkan päässä (alle 500 m)'
+  },
+
+  // Vyöhyke 3: Kampin yläkerta (Kortteli, 5. krs)
+  {
+    id: 'missyao',
+    name: 'Miss Yao (4.6)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.facebook.com/missyaohelsinki',
+    fixedMenu: true,
+    fixedMenuNote: 'Aasialaista fuusiota',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  },
+  {
+    id: 'hoku',
+    name: 'HOKU (4.5)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~15€',
+    hours: 'ma-pe 11:00-15:00',
+    url: 'https://www.hoku.fi',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  },
+  {
+    id: 'eatpoke',
+    name: 'Eat Poke Kamppi (4.6)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://eatpoke.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Poke-kulhoja',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  },
+  {
+    id: 'pobre',
+    name: 'Pobre (4.5)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://pobrecito.fi',
+    fixedMenu: true,
+    fixedMenuNote: 'Filippiiniläistä laatua',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  },
+  {
+    id: 'sandro',
+    name: 'Sandro (4.1)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://sandro.fi',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  },
+  {
+    id: 'liemi',
+    name: 'Lie Mi (4.2)',
+    address: 'Kamppi Kortteli',
+    distance: '~500m',
+    price: '~14€',
+    hours: 'ma-pe 11:00-14:30',
+    url: 'https://liemi.fi',
+    zone: 3,
+    zoneLabel: 'Kampin yläkerta (Kortteli, 5. krs)'
+  }
+];
+
 // ── Yhdistetty lista location-kentällä ───────────────────────────────────────
 
 const restaurants = [
   ...ruoholahtiRestaurants.map(r => ({ ...r, location: 'ruoholahti' })),
+  ...keskustaRestaurants.map(r => ({ ...r, location: 'keskusta' })),
   ...kangasalaRestaurants.map(r => ({ ...r, location: 'kangasala' })),
   ...tampereRestaurants.map(r => ({ ...r, location: 'tampere' }))
 ];
