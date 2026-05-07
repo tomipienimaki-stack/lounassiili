@@ -1,0 +1,81 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { MapPin, Clock, ExternalLink, Leaf } from "lucide-react";
+
+interface MenuItem {
+  name: string;
+  diets: string[];
+}
+
+interface RestaurantProps {
+  name: string;
+  address: string;
+  hours: string;
+  price: string;
+  url: string;
+  menu: MenuItem[];
+  distance?: string;
+}
+
+export function RestaurantCard({ name, address, hours, price, url, menu, distance }: RestaurantProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="glass-card rounded-2xl p-6 h-full flex flex-col"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-2xl font-bold mb-1">{name}</h3>
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <MapPin className="w-4 h-4" />
+            <span>{address} {distance && `• ${distance}`}</span>
+          </div>
+        </div>
+        <div className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
+          {price}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-6">
+        <Clock className="w-4 h-4" />
+        <span>{hours}</span>
+      </div>
+
+      <div className="flex-grow space-y-4">
+        {menu.length > 0 ? (
+          menu.map((item, idx) => (
+            <div key={idx} className="group border-b border-white/5 pb-3 last:border-0">
+              <p className="font-medium group-hover:text-primary transition-colors">{item.name}</p>
+              {item.diets.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {item.diets.map((diet, dIdx) => (
+                    <span key={dIdx} className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md flex items-center gap-1">
+                      {diet}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="text-muted-foreground italic text-sm">Lounaslistaa ei löytynyt tälle päivälle.</p>
+        )}
+      </div>
+
+      <div className="mt-8 pt-4 border-t border-white/5">
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-secondary transition-all active:scale-95"
+        >
+          <span>Katso sivu</span>
+          <ExternalLink className="w-4 h-4" />
+        </a>
+      </div>
+    </motion.div>
+  );
+}
