@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { getTodayDayName, RestaurantMenu, MenuItem, DAYS_FI } from './utils';
+import { getTodayDayCaps, RestaurantMenu, MenuItem } from './utils';
 
 const URL = 'https://www.popino.fi/lounas/';
 
@@ -11,26 +11,36 @@ export async function scrapePopino(): Promise<RestaurantMenu> {
     });
 
     const $ = cheerio.load(response.data);
-    const todayName = getTodayDayName();
+    const todayCaps = getTodayDayCaps() + ':'; // e.g. "TO:"
     const items: MenuItem[] = [];
 
-    // Popinon sivulla lounas on yleensä h3- tai strong-otsikoiden alla
-    $('.wpb_wrapper p, .wpb_wrapper h3').each((_, el) => {
-      const text = $(el).text().trim().toLowerCase();
-      
-      if (text.startsWith(todayName)) {
-        let nextElement = $(el).next();
-        while (nextElement.length && !DAYS_FI.some(d => nextElement.text().toLowerCase().startsWith(d))) {
-          const dishText = nextElement.text().trim();
-          
-          if (dishText.length > 5) {
-            const name = dishText.split(/[0-9]/)[0].trim(); 
-            items.push({ 
-              name: name, 
-              diets: [] 
-            });
+    let capturing = false;
+    $('.b-text-c p').each((_, el) => {
+      const text = $(el).text().trim();
+      if (!text) return;
+
+      const upperText = text.toUpperCase();
+      const days = ['MA:', 'TI:', 'KE:', 'TO:', 'PE:', 'LA:'];
+      const startsNewDay = days.some(d => upperText.startsWith(d));
+
+      if (startsNewDay) {
+        capturing = upperText.startsWith(todayCaps);
+      }
+
+      if (capturing) {
+        let dishText = text;
+        if (upperText.startsWith(todayCaps)) {
+          dishText = text.substring(todayCaps.length).trim();
+        }
+        
+        if (dishText && dishText.length > 2) {
+          // Avoid pushing the same day header if it was already handled
+          if (!startsNewDay || upperText.startsWith(todayCaps)) {
+             items.push({ 
+               name: dishText, 
+               diets: [] 
+             });
           }
-          nextElement = nextElement.next();
         }
       }
     });

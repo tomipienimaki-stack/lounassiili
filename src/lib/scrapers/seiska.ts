@@ -1,8 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { getTodayDayName, RestaurantMenu, MenuItem } from './utils';
+import { RestaurantMenu, MenuItem } from './utils';
 
-const URL = 'https://www.ravintolaseiska.fi/lounaslista';
+const URL = 'https://www.ravintolaseiska.com/lounas';
 
 export async function scrapeSeiska(): Promise<RestaurantMenu> {
   try {
@@ -11,18 +11,32 @@ export async function scrapeSeiska(): Promise<RestaurantMenu> {
     });
 
     const $ = cheerio.load(response.data);
-    const todayName = getTodayDayName();
     const items: MenuItem[] = [];
 
-    $('.lounas-lista-day').each((_, el) => {
-        const day = $(el).find('.day-name').text().trim().toLowerCase();
-        if (day.includes(todayName)) {
-            $(el).find('.lounas-item').each((_, item) => {
-                const name = $(item).find('.item-name').text().trim();
-                if (name) items.push({ name, diets: [] });
-            });
-        }
+    // Seiska is a Wix site. Menu is usually in richText elements.
+    $('[data-testid="richTextElement"]').each((_, el) => {
+      const text = $(el).text().trim();
+      // Look for lines that look like menu items (contain Finnish day names or are in the right section)
+      if (text.length > 20 && (text.includes('Maanantai') || text.includes('Perjantai') || text.includes('Lounas'))) {
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 5);
+        lines.forEach(line => {
+          if (!line.includes('LOUNAS') && !line.includes('Hinnat')) {
+            items.push({ name: line, diets: [] });
+          }
+        });
+      }
     });
+
+    // Fallback
+    if (items.length === 0) {
+      const content = $('main').text();
+      if (content) {
+        const cleaned = content.replace(/\s+/g, ' ').trim();
+        if (cleaned.length > 20) {
+           items.push({ name: cleaned, diets: [] });
+        }
+      }
+    }
 
     return {
       date: new Date().toISOString().split('T')[0],

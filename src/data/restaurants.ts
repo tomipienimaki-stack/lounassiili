@@ -98,7 +98,7 @@ export const restaurants: Restaurant[] = [
     distance: '',
     price: '~15€',
     hours: 'ma-pe 11:00-14:00',
-    url: 'https://www.millersbbq.fi/',
+    url: 'https://www.millersbbq.fi/lounas/',
     location: 'hameenlinna'
   },
   {
@@ -108,7 +108,17 @@ export const restaurants: Restaurant[] = [
     distance: '',
     price: '~13€',
     hours: 'ma-pe 11:00-14:30',
-    url: 'https://himalayakitchen.fi/',
+    url: 'https://www.luncher.fi/himalaya-kitchen',
+    location: 'hameenlinna'
+  },
+  {
+    id: 'lounasmesta',
+    name: 'Ravintola Lounas-Mesta',
+    address: 'Kapellimestarinkatu 2, Hämeenlinna',
+    distance: '',
+    price: '~12,70€',
+    hours: 'ma-pe 10:30-14:00',
+    url: 'https://lounasmesta.fi/lounaslista/',
     location: 'hameenlinna'
   },
   {
@@ -118,7 +128,7 @@ export const restaurants: Restaurant[] = [
     distance: '',
     price: '~12€',
     hours: 'ma-pe 10:30-14:00',
-    url: 'https://www.lounaskulma.fi/',
+    url: 'https://www.lounaskulma.fi/lounaslista/',
     location: 'hameenlinna'
   },
   {
@@ -138,7 +148,7 @@ export const restaurants: Restaurant[] = [
     distance: '',
     price: '~13€',
     hours: 'ma-pe 11:00-14:00',
-    url: 'https://www.ravintolabrahe.fi/',
+    url: 'https://www.ravintolabrahe.fi/lounas/',
     location: 'hameenlinna'
   },
   {
@@ -148,7 +158,7 @@ export const restaurants: Restaurant[] = [
     distance: '',
     price: '~12€',
     hours: 'ma-pe 10:30-14:00',
-    url: 'https://www.ravintolaseiska.fi/',
+    url: 'https://www.ravintolaseiska.fi/lounas/',
     location: 'hameenlinna'
   }
 ];

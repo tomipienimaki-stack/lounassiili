@@ -9,9 +9,19 @@ export const DIET_MAP: Record<string, string> = {
 };
 
 export const DAYS_FI = ['sunnuntai', 'maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai'];
+export const DAYS_FI_SHORT = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
+export const DAYS_FI_CAPS = ['SU', 'MA', 'TI', 'KE', 'TO', 'PE', 'LA'];
 
 export function getTodayDayName() {
   return DAYS_FI[new Date().getDay()];
+}
+
+export function getTodayDayShort() {
+  return DAYS_FI_SHORT[new Date().getDay()];
+}
+
+export function getTodayDayCaps() {
+  return DAYS_FI_CAPS[new Date().getDay()];
 }
 
 export interface MenuItem {

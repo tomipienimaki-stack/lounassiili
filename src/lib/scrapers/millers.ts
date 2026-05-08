@@ -2,9 +2,9 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { RestaurantMenu, MenuItem } from './utils';
 
-const URL = 'https://braheravintolat.fi/';
+const URL = 'https://millersbbq.fi/menu/';
 
-export async function scrapeBrahe(): Promise<RestaurantMenu> {
+export async function scrapeMillers(): Promise<RestaurantMenu> {
   try {
     const response = await axios.get(URL, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
@@ -13,27 +13,22 @@ export async function scrapeBrahe(): Promise<RestaurantMenu> {
     const $ = cheerio.load(response.data);
     const items: MenuItem[] = [];
 
-    // On braheravintolat.fi, the menu is often in a section with id "lounasmenu"
-    // The structure seems to be items in .row-item
-    $('.row-item').each((_, el) => {
-      const name = $(el).find('.item-title').text().trim();
-      const desc = $(el).find('.item-description').text().trim();
-      
-      if (name) {
-        items.push({
-          name: desc ? `${name}: ${desc}` : name,
-          diets: []
-        });
+    // Miller's BBQ has a menu page with items in .menu-item or similar
+    // Since they don't have a rotating weekly menu, we'll capture their main offerings
+    $('.elementor-widget-container h3, .elementor-widget-container p').each((_, el) => {
+      const text = $(el).text().trim();
+      if (text.length > 5 && text.length < 100 && !text.includes('€')) {
+        items.push({ name: text, diets: [] });
       }
     });
 
-    // Fallback if .row-item not found
+    // Fallback
     if (items.length === 0) {
-      const content = $('#lounasmenu').text() || $('.et_pb_section').text();
+      const content = $('.elementor-page').text();
       if (content) {
         const cleaned = content.replace(/\s+/g, ' ').trim();
         if (cleaned.length > 20) {
-          items.push({ name: cleaned, diets: [] });
+           items.push({ name: cleaned, diets: [] });
         }
       }
     }

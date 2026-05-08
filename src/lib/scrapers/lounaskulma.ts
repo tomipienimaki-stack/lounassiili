@@ -1,8 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { getTodayDayName, RestaurantMenu, MenuItem } from './utils';
+import { RestaurantMenu, MenuItem } from './utils';
 
-const URL = 'https://www.lounaskulma.fi/lounaslista';
+const URL = 'https://www.maaritinlounaskulma.fi/';
 
 export async function scrapeLounaskulma(): Promise<RestaurantMenu> {
   try {
@@ -11,22 +11,32 @@ export async function scrapeLounaskulma(): Promise<RestaurantMenu> {
     });
 
     const $ = cheerio.load(response.data);
-    const todayName = getTodayDayName();
     const items: MenuItem[] = [];
 
-    $('.entry-content p, .entry-content h3').each((_, el) => {
-        const text = $(el).text().trim().toLowerCase();
-        if (text.includes(todayName)) {
-            let next = $(el).next();
-            while (next.length && !next.text().toLowerCase().includes('maanantai') && !next.text().toLowerCase().includes('tiistai')) {
-                const itemText = next.text().trim();
-                if (itemText.length > 5) {
-                    items.push({ name: itemText, diets: [] });
-                }
-                next = next.next();
-            }
+    // Maaritin Lounaskulma often lists the menu in a specific section
+    // We'll look for day names and capture the items
+    const content = $('#main-content').text() || $('.entry-content').text() || $('body').text();
+    
+    if (content) {
+      const today = new Date().toLocaleDateString('fi-FI', { weekday: 'long' });
+      const todayFull = today.charAt(0).toUpperCase() + today.slice(1);
+      
+      const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 3);
+      let capturing = false;
+      for (const line of lines) {
+        if (line.includes(todayFull)) {
+          capturing = true;
+          continue;
         }
-    });
+        if (capturing && (line.includes('Maanantai') || line.includes('Tiistai') || line.includes('Keskiviikko') || line.includes('Torstai') || line.includes('Perjantai'))) {
+          capturing = false;
+          break;
+        }
+        if (capturing && !line.includes('Lounas') && !line.includes('klo')) {
+          items.push({ name: line, diets: [] });
+        }
+      }
+    }
 
     return {
       date: new Date().toISOString().split('T')[0],
