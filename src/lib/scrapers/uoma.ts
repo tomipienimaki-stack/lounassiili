@@ -1,73 +1,51 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { RestaurantMenu, MenuItem } from './utils';
+import { cachedGet } from './cache';
+import { emptyMenu, extractItem, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://www.ravintolauoma.fi/lounas';
 
+// Uoma serves a single weekly lunch menu (Wed-Fri). We just extract the salad
+// table and the main dish options once — no day filtering needed.
 export async function scrapeUoma(): Promise<RestaurantMenu> {
   try {
-    const response = await axios.get(URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-
-    const $ = cheerio.load(response.data);
+    const html = await cachedGet<string>(URL);
+    const $ = cheerio.load(html);
     const items: MenuItem[] = [];
+    const seen = new Set<string>();
 
-    // Uoma's menu often lists dishes under "Pääruokavaihtoehdot"
-    // Let's look for that heading or any list of dishes
-    let capturing = false;
-    $('p, h2, h3, div').each((_, el) => {
-      const text = $(el).text().trim();
-      
-      if (text.includes('Pääruokavaihtoehdot') || text.includes('Lounaslista')) {
-        capturing = true;
-        return;
-      }
-      
-      if (capturing) {
-        if (text.includes('Kolmen ruokalajin') || text.includes('Ilmoitathan') || text.includes('Yhteystiedot') || text.includes('Varaukset')) {
-          capturing = false;
-          return;
-        }
-        
-        // If it looks like a dish (long enough, not just a price)
-        if (text.length > 5 && !text.match(/^\d+[,.]\d+\s*€$/)) {
-          // If the text contains a price at the end, keep it or clean it
-          const cleanedText = text.replace(/\d+[,.]\d+\s*€.*$/, '').trim();
-          if (cleanedText.length > 5) {
-            items.push({
-              name: cleanedText,
-              diets: []
-            });
-          } else if (text.length > 10) {
-            items.push({ name: text, diets: [] });
-          }
-        }
-      }
+    // The page lists each menu line in its own <p> or <span>. Walk paragraphs.
+    $('p, span').each((_, el) => {
+      const text = $(el).text().replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      if (text.length < 5 || text.length > 220) return;
+      if (seen.has(text)) return;
+
+      // Heuristic: menu lines either end with allergen codes in parens, or
+      // contain a euro price. Skip dates, contact info, headings.
+      // Only accept lines that end with a Finnish-allergen paren group.
+      const hasParenCodes = /\(([a-zA-ZäöÄÖ]+)(?:\s*,\s*[a-zA-ZäöÄÖ]+)*\)\s*$/.test(text);
+      if (!hasParenCodes) return;
+      if (/yhteystiedot|varaukset|ilmoitathan|sähköpos|puh\./i.test(text)) return;
+      if (/^lounas\b/i.test(text)) return;
+      if (/^\d{1,2}\.\d{1,2}/.test(text)) return;
+      if (/lapset|alkuruoka|jälkiruoka\b/i.test(text) && text.length < 30) return;
+
+      // Strip leading "..." artifacts from CMS
+      const cleanName = text.replace(/^\.{2,}\s*/, '').trim();
+      const parsed = extractItem(cleanName);
+      if (!parsed || parsed.name.length < 8) return;
+      if (seen.has(parsed.name)) return;
+      seen.add(parsed.name);
+      seen.add(text);
+      items.push(parsed);
     });
-
-    // Fallback if capturing logic failed but we have some content
-    if (items.length === 0) {
-      const content = $('.et_pb_module_inner').first().text() || $('.entry-content').text();
-      if (content) {
-        const cleaned = content.replace(/\s+/g, ' ').trim();
-        if (cleaned.length > 20) {
-           items.push({ name: cleaned, diets: [] });
-        }
-      }
-    }
 
     return {
       date: new Date().toISOString().split('T')[0],
       items,
-      source: URL
-    };
-  } catch (error: any) {
-    return {
-      date: new Date().toISOString().split('T')[0],
-      items: [],
       source: URL,
-      error: error.message
     };
+  } catch (error: unknown) {
+    return emptyMenu(URL, (error as Error).message);
   }
 }

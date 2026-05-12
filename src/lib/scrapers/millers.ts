@@ -1,49 +1,38 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { RestaurantMenu, MenuItem } from './utils';
+import { cachedGet } from './cache';
+import { emptyMenu, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://millersbbq.fi/menu/';
 
+// Miller's BBQ has a fixed à la carte BBQ menu (no rotating daily lunch).
+// Extract the combo offerings under "FIRST COME, FIRST SERVED" — they pair
+// name + price in consecutive <h4> tags inside the same row.
 export async function scrapeMillers(): Promise<RestaurantMenu> {
   try {
-    const response = await axios.get(URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-
-    const $ = cheerio.load(response.data);
+    const html = await cachedGet<string>(URL);
+    const $ = cheerio.load(html);
     const items: MenuItem[] = [];
 
-    // Miller's BBQ has a menu page with items in .menu-item or similar
-    // Since they don't have a rotating weekly menu, we'll capture their main offerings
-    $('.elementor-widget-container h3, .elementor-widget-container p').each((_, el) => {
-      const text = $(el).text().trim();
-      if (text.length > 5 && text.length < 100 && !text.includes('€')) {
-        items.push({ name: text, diets: [] });
-      }
-    });
-
-    // Fallback
-    if (items.length === 0) {
-      const content = $('.elementor-page').text();
-      if (content) {
-        const cleaned = content.replace(/\s+/g, ' ').trim();
-        if (cleaned.length > 20) {
-           items.push({ name: cleaned, diets: [] });
-        }
+    const headings = $('h4').toArray();
+    for (let i = 0; i < headings.length - 1; i++) {
+      const name = $(headings[i]).text().replace(/\s+/g, ' ').trim();
+      const next = $(headings[i + 1]).text().replace(/\s+/g, ' ').trim();
+      // Combo rows: name (uppercase letters and digits) + price-only sibling
+      if (/^[A-ZÄÖÅ0-9].{2,60}$/.test(name) && /^\d{1,3}[,.]?\d{0,2}\s*€$/.test(next)) {
+        items.push({ name: `${name} — ${next}`, diets: [] });
+        i++; // consume price
       }
     }
 
+    // Keep the list short and useful; first 6 combos are the lunch-relevant ones.
+    const trimmed = items.slice(0, 6);
+
     return {
       date: new Date().toISOString().split('T')[0],
-      items,
-      source: URL
-    };
-  } catch (error: any) {
-    return {
-      date: new Date().toISOString().split('T')[0],
-      items: [],
+      items: trimmed,
       source: URL,
-      error: error.message
     };
+  } catch (error: unknown) {
+    return emptyMenu(URL, (error as Error).message);
   }
 }

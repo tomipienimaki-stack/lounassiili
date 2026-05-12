@@ -1,54 +1,40 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { RestaurantMenu, MenuItem } from './utils';
+import { cachedGet } from './cache';
+import { emptyMenu, extractItem, getTodayDayIndex, matchDayIndex, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://braheravintolat.fi/';
 
 export async function scrapeBrahe(): Promise<RestaurantMenu> {
   try {
-    const response = await axios.get(URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-
-    const $ = cheerio.load(response.data);
+    const html = await cachedGet<string>(URL);
+    const $ = cheerio.load(html);
+    const today = getTodayDayIndex();
     const items: MenuItem[] = [];
 
-    // On braheravintolat.fi, the menu is often in a section with id "lounasmenu"
-    // The structure seems to be items in .row-item
-    $('.row-item').each((_, el) => {
-      const name = $(el).find('.item-title').text().trim();
-      const desc = $(el).find('.item-description').text().trim();
-      
-      if (name) {
-        items.push({
-          name: desc ? `${name}: ${desc}` : name,
-          diets: []
-        });
-      }
-    });
+    $('.brahe-menu-item').each((_, el) => {
+      const dayLabel = $(el).find('.item-title h3').first().text().trim();
+      const idx = matchDayIndex(dayLabel);
+      if (idx !== today) return;
 
-    // Fallback if .row-item not found
-    if (items.length === 0) {
-      const content = $('#lounasmenu').text() || $('.et_pb_section').text();
-      if (content) {
-        const cleaned = content.replace(/\s+/g, ' ').trim();
-        if (cleaned.length > 20) {
-          items.push({ name: cleaned, diets: [] });
-        }
-      }
-    }
+      $(el).find('.row-item').each((_, row) => {
+        const title = $(row).find('.row-title').text().replace(/\s+/g, ' ').trim();
+        const price = $(row).find('.row-price').text().replace(/\s+/g, ' ').trim();
+        if (!title) return;
+        const parsed = extractItem(title);
+        if (!parsed) return;
+        items.push({
+          name: price ? `${parsed.name} — ${price}` : parsed.name,
+          diets: parsed.diets,
+        });
+      });
+    });
 
     return {
       date: new Date().toISOString().split('T')[0],
       items,
-      source: URL
-    };
-  } catch (error: any) {
-    return {
-      date: new Date().toISOString().split('T')[0],
-      items: [],
       source: URL,
-      error: error.message
     };
+  } catch (error: unknown) {
+    return emptyMenu(URL, (error as Error).message);
   }
 }

@@ -1,39 +1,54 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { RestaurantMenu, MenuItem } from './utils';
+import { cachedGet } from './cache';
+import { emptyMenu, extractItem, getTodayDayIndex, matchDayIndex, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://www.ravintolaseiska.com/lounas';
 
+// Seiska is on Wix. Each day is an <h5> like "Tiistai 12.5.", followed by
+// <p> rows with the dishes until the next <h5>.
 export async function scrapeSeiska(): Promise<RestaurantMenu> {
   try {
-    const response = await axios.get(URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-
-    const $ = cheerio.load(response.data);
+    const html = await cachedGet<string>(URL);
+    const $ = cheerio.load(html);
+    const today = getTodayDayIndex();
     const items: MenuItem[] = [];
 
-    // Seiska is a Wix site. Menu is usually in richText elements.
-    $('[data-testid="richTextElement"]').each((_, el) => {
-      const text = $(el).text().trim();
-      // Look for lines that look like menu items (contain Finnish day names or are in the right section)
-      if (text.length > 20 && (text.includes('Maanantai') || text.includes('Perjantai') || text.includes('Lounas'))) {
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 5);
-        lines.forEach(line => {
-          if (!line.includes('LOUNAS') && !line.includes('Hinnat')) {
-            items.push({ name: line, diets: [] });
-          }
-        });
-      }
-    });
+    // Find the container that holds the day h5s + dish ps in a flat sequence.
+    // Easiest: walk all h5 and p in document order globally.
+    const nodes = $('h5, p').toArray();
+    let capturing = false;
+    let stop = false;
 
-    // Fallback
-    if (items.length === 0) {
-      const content = $('main').text();
-      if (content) {
-        const cleaned = content.replace(/\s+/g, ' ').trim();
-        if (cleaned.length > 20) {
-           items.push({ name: cleaned, diets: [] });
+    for (const node of nodes) {
+      if (stop) break;
+      const tag = ($(node).prop('tagName') || '').toLowerCase();
+      const text = $(node).text().replace(/\s+/g, ' ').trim();
+      if (!text) continue;
+
+      if (tag === 'h5') {
+        const idx = matchDayIndex(text);
+        if (idx !== null) {
+          if (capturing) {
+            stop = true;
+            break;
+          }
+          capturing = idx === today;
+        }
+        continue;
+      }
+
+      if (capturing) {
+        // skip section markers and pricing footer
+        if (/^(LOUNAS|Hinnat|Avoinna|Lounas\s+\d|KAHVI|Lounaan)/i.test(text)) continue;
+        if (text.toLowerCase().includes('kiinni')) continue;
+        if (/^\d{1,2}[,.]\d{0,2}\s*€/.test(text)) continue;
+        // A single <p> sometimes contains two dishes glued together, e.g.
+        // "Karjalanpaisti M, G Muusi L, G". Split on diet-codes boundary
+        // followed by a new capitalized word.
+        const segments = text.split(/(?<=\s[A-Z](?:,\s*[A-Z]){0,3})\s+(?=[A-ZÄÖÅ][a-zäöå])/);
+        for (const seg of segments) {
+          const parsed = extractItem(seg.trim());
+          if (parsed && parsed.name.length > 2) items.push(parsed);
         }
       }
     }
@@ -41,14 +56,9 @@ export async function scrapeSeiska(): Promise<RestaurantMenu> {
     return {
       date: new Date().toISOString().split('T')[0],
       items,
-      source: URL
-    };
-  } catch (error: any) {
-    return {
-      date: new Date().toISOString().split('T')[0],
-      items: [],
       source: URL,
-      error: error.message
     };
+  } catch (error: unknown) {
+    return emptyMenu(URL, (error as Error).message);
   }
 }

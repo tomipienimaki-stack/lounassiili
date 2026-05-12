@@ -8,6 +8,7 @@ import { scrapeMillers } from './millers';
 import { scrapeLounaskulma } from './lounaskulma';
 import { scrapeBrahe } from './brahe';
 import { scrapeSeiska } from './seiska';
+import { scrapeHimalaya } from './himalaya';
 import { RestaurantMenu } from './utils';
 
 export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
@@ -21,12 +22,23 @@ export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
   lounaskulma: scrapeLounaskulma,
   brahe: scrapeBrahe,
   seiska: scrapeSeiska,
+  himalaya: scrapeHimalaya,
 };
 
 export async function fetchAllMenus() {
-  const results: Record<string, RestaurantMenu> = {};
-  for (const [id, scraper] of Object.entries(scrapers)) {
-    results[id] = await scraper();
-  }
-  return results;
+  const entries = await Promise.all(
+    Object.entries(scrapers).map(async ([id, scraper]) => {
+      try {
+        return [id, await scraper()] as const;
+      } catch (err) {
+        return [id, {
+          date: new Date().toISOString().split('T')[0],
+          items: [],
+          source: '',
+          error: (err as Error).message,
+        }] as const;
+      }
+    })
+  );
+  return Object.fromEntries(entries) as Record<string, RestaurantMenu>;
 }

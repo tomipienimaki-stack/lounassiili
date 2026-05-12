@@ -1,54 +1,76 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { RestaurantMenu, MenuItem } from './utils';
+import { cachedGet } from './cache';
+import { emptyMenu, extractItem, getTodayDayIndex, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://www.maaritinlounaskulma.fi/';
 
+const DAY_TOKENS = ['ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'];
+
+function isDayHeader(text: string): number | null {
+  const m = text.trim().toLowerCase().match(/^(ma|ti|ke|to|pe|la|su)\s+\d{1,2}\.\d{1,2}\.?/);
+  if (!m) return null;
+  return DAY_TOKENS.indexOf(m[1]);
+}
+
+function isStopMarker(text: string): boolean {
+  const t = text.trim().toLowerCase();
+  return t.startsWith('suljettu') || t.startsWith('olemme kiinni');
+}
+
 export async function scrapeLounaskulma(): Promise<RestaurantMenu> {
   try {
-    const response = await axios.get(URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-
-    const $ = cheerio.load(response.data);
+    const html = await cachedGet<string>(URL);
+    const $ = cheerio.load(html);
+    const today = getTodayDayIndex();
     const items: MenuItem[] = [];
 
-    // Maaritin Lounaskulma often lists the menu in a specific section
-    // We'll look for day names and capture the items
-    const content = $('#main-content').text() || $('.entry-content').text() || $('body').text();
-    
-    if (content) {
-      const today = new Date().toLocaleDateString('fi-FI', { weekday: 'long' });
-      const todayFull = today.charAt(0).toUpperCase() + today.slice(1);
-      
-      const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 3);
-      let capturing = false;
-      for (const line of lines) {
-        if (line.includes(todayFull)) {
-          capturing = true;
-          continue;
-        }
-        if (capturing && (line.includes('Maanantai') || line.includes('Tiistai') || line.includes('Keskiviikko') || line.includes('Torstai') || line.includes('Perjantai'))) {
-          capturing = false;
-          break;
-        }
-        if (capturing && !line.includes('Lounas') && !line.includes('klo')) {
-          items.push({ name: line, diets: [] });
-        }
+    const paragraphs = $('p').toArray();
+    const raw: string[] = [];
+    let capturing = false;
+
+    for (const p of paragraphs) {
+      // Normalize non-breaking and Apple-converted spaces, collapse runs
+      const text = $(p).text().replace(/[  ]/g, ' ').replace(/[ \t]+/g, ' ');
+      const trimmed = text.trim();
+      if (!trimmed) continue;
+
+      const dayIdx = isDayHeader(trimmed);
+      if (dayIdx !== null) {
+        capturing = dayIdx === today;
+        continue;
       }
+      if (capturing && isStopMarker(trimmed)) {
+        capturing = false;
+        continue;
+      }
+      if (!capturing) continue;
+      if (/^(tervetuloa|maarit|niina|n[äa]hd|olemme)/i.test(trimmed)) continue;
+      raw.push(text);
+    }
+
+    // Merge wrapped lines (continuation starts with lowercase)
+    const merged: string[] = [];
+    for (const line of raw) {
+      const t = line.trim();
+      const startsLower = /^[a-zäöå]/.test(t);
+      if (startsLower && merged.length > 0) {
+        merged[merged.length - 1] = (merged[merged.length - 1].trim() + ' ' + t).replace(/\s+/g, ' ');
+      } else {
+        merged.push(t);
+      }
+    }
+
+    for (const line of merged) {
+      const parsed = extractItem(line);
+      if (parsed && parsed.name.length > 2) items.push(parsed);
     }
 
     return {
       date: new Date().toISOString().split('T')[0],
       items,
-      source: URL
-    };
-  } catch (error: any) {
-    return {
-      date: new Date().toISOString().split('T')[0],
-      items: [],
       source: URL,
-      error: error.message
     };
+  } catch (error: unknown) {
+    return emptyMenu(URL, (error as Error).message);
   }
 }
