@@ -2,8 +2,25 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Calendar } from "lucide-react";
+
+function formatToday(): string {
+  const d = new Date();
+  const weekday = d.toLocaleDateString("fi-FI", { weekday: "long" });
+  const date = d.toLocaleDateString("fi-FI", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${date}`;
+}
 
 export function Header() {
+  // Render date client-side only to avoid SSR/CSR timezone mismatches.
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => setToday(formatToday()), []);
+
   return (
     <header className="relative py-12 px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 relative z-10">
@@ -32,14 +49,23 @@ export function Header() {
           >
             Lounas<span className="text-secondary">siili</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-muted-foreground text-xl max-w-xl"
           >
-            Päivän herkullisimmat lounaat Ruoholahden, Kangasalan ja keskustan parhaista ravintoloista.
+            Päivän herkullisimmat lounaat Ruoholahden, Kangasalan, keskustan ja Hämeenlinnan parhaista ravintoloista.
           </motion.p>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-sm font-semibold"
+          >
+            <Calendar className="w-4 h-4" />
+            <span suppressHydrationWarning>{today ?? " "}</span>
+          </motion.div>
         </div>
       </div>
       

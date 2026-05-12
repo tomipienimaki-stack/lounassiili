@@ -8,8 +8,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Lounassiili - Ruoholahden parhaat lounaat",
-  description: "Löydä päivän herkullisimmat lounaat Ruoholahdesta, Kangasalta ja keskustasta.",
+  title: "🦔 Lounassiili — päivän lounaat",
+  description: "Löydä päivän herkullisimmat lounaat Ruoholahdesta, Kangasalta, keskustasta ja Hämeenlinnasta.",
 };
 
 export default function RootLayout({
