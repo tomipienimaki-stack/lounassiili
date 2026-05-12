@@ -9,6 +9,9 @@ import { scrapeLounaskulma } from './lounaskulma';
 import { scrapeBrahe } from './brahe';
 import { scrapeSeiska } from './seiska';
 import { scrapeHimalaya } from './himalaya';
+import { scrapePazzi } from './pazzi';
+import { scrapeZerafiina } from './zerafiina';
+import { scrapeJumbowl } from './jumbowl';
 import { RestaurantMenu } from './utils';
 
 export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
@@ -23,6 +26,9 @@ export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
   brahe: scrapeBrahe,
   seiska: scrapeSeiska,
   himalaya: scrapeHimalaya,
+  pazzi: scrapePazzi,
+  zerafiina: scrapeZerafiina,
+  jumbowl: scrapeJumbowl,
 };
 
 export async function fetchAllMenus() {
