@@ -44,7 +44,7 @@ export const restaurants: Restaurant[] = [
     distance: '~200m',
     price: '~12€',
     hours: 'ma-pe 11:00-14:00',
-    url: 'https://www.lounaat.info/lounas/the-pantry-ruoholahti/helsinki',
+    url: 'https://thepantry.fi/ruoholahti/',
     location: 'ruoholahti',
     zone: 1
   },
@@ -72,13 +72,15 @@ export const restaurants: Restaurant[] = [
   // Keskusta
   {
     id: 'jumbowl',
-    name: 'Ravintola Jumbowl Noodle',
+    name: 'Jumbowl Noodle',
     address: 'Arkadiankatu 19',
     distance: '~110m',
-    price: '~13€',
-    hours: 'ma-pe 11:00-15:00',
-    url: 'https://jumbowl.fi',
-    location: 'keskusta'
+    price: '~15,50€',
+    hours: 'ma-pe 11:00-21:00',
+    url: 'https://jumbowl.fi/en/menu',
+    location: 'keskusta',
+    fixedMenu: true,
+    fixedMenuNote: 'À la carte -nuudeliravintola (ei vaihtuvaa lounaslistaa)'
   },
   // Hämeenlinna
   {
@@ -156,9 +158,29 @@ export const restaurants: Restaurant[] = [
     name: 'Ravintola Seiska',
     address: 'Hämeenlinna',
     distance: '',
+    price: '~13,20€',
+    hours: 'ma-pe 11:00-14:00',
+    url: 'https://www.ravintolaseiska.com/lounas',
+    location: 'hameenlinna'
+  },
+  {
+    id: 'myllytupa',
+    name: 'Lounasravintola Myllytupa',
+    address: 'Myllärinkatu 9, Hämeenlinna',
+    distance: '',
     price: '~12€',
     hours: 'ma-pe 10:30-14:00',
-    url: 'https://www.ravintolaseiska.fi/lounas/',
+    url: 'https://www.myllytupa.fi/lounasravintola',
+    location: 'hameenlinna'
+  },
+  {
+    id: 'bora',
+    name: 'Ravintola Bora',
+    address: 'Hätilänkatu 1, Hämeenlinna',
+    distance: '',
+    price: '~13,50€',
+    hours: 'ti-pe 10:30-14:00',
+    url: 'https://www.bora.fi/lounas',
     location: 'hameenlinna'
   }
 ];

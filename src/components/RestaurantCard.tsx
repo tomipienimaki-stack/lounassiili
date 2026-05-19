@@ -16,9 +16,11 @@ interface RestaurantProps {
   url: string;
   menu: MenuItem[];
   distance?: string;
+  fixedMenu?: boolean;
+  fixedMenuNote?: string;
 }
 
-export function RestaurantCard({ name, address, hours, price, url, menu, distance }: RestaurantProps) {
+export function RestaurantCard({ name, address, hours, price, url, menu, distance, fixedMenu, fixedMenuNote }: RestaurantProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -45,6 +47,9 @@ export function RestaurantCard({ name, address, hours, price, url, menu, distanc
       </div>
 
       <div className="flex-grow space-y-4">
+        {fixedMenu && fixedMenuNote && (
+          <p className="text-xs italic text-muted-foreground mb-2">{fixedMenuNote}</p>
+        )}
         {menu.length > 0 ? (
           menu.map((item, idx) => (
             <div key={idx} className="group border-b border-white/5 pb-3 last:border-0">
