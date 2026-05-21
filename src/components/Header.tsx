@@ -22,8 +22,8 @@ export function Header() {
   useEffect(() => setToday(formatToday()), []);
 
   return (
-    <header className="relative py-12 px-6 overflow-hidden">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 relative z-10">
+    <header className="relative py-8 sm:py-12 px-4 sm:px-6 overflow-hidden">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-6 sm:gap-8 relative z-10">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -45,7 +45,7 @@ export function Header() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-4"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-3 sm:mb-4"
           >
             Lounas<span className="text-secondary">siili</span>
           </motion.h1>
@@ -53,7 +53,7 @@ export function Header() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-muted-foreground text-xl max-w-xl"
+            className="text-muted-foreground text-base sm:text-xl max-w-xl"
           >
             Päivän herkullisimmat lounaat Ruoholahden, Kangasalan, keskustan ja Hämeenlinnan parhaista ravintoloista.
           </motion.p>

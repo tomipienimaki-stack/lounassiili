@@ -26,17 +26,17 @@ export function RestaurantCard({ name, address, hours, price, url, menu, distanc
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="glass-card rounded-2xl p-6 h-full flex flex-col"
+      className="glass-card rounded-2xl p-5 sm:p-6 h-full flex flex-col min-w-0 break-words"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-2xl font-bold mb-1">{name}</h3>
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
-            <MapPin className="w-4 h-4" />
+      <div className="flex justify-between items-start gap-3 mb-4">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-xl sm:text-2xl font-bold mb-1">{name}</h3>
+          <div className="flex items-start gap-2 text-muted-foreground text-sm">
+            <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{address} {distance && `• ${distance}`}</span>
           </div>
         </div>
-        <div className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
+        <div className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shrink-0 whitespace-nowrap">
           {price}
         </div>
       </div>

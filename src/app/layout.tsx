@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fi" className={`${outfit.variable}`}>
-      <body className="antialiased">
+      <body className="antialiased overflow-x-hidden">
         {children}
       </body>
     </html>

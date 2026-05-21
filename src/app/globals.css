@@ -51,6 +51,15 @@
   @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary to-primary;
 }
 
+/* Hide scrollbar utility (for horizontal tab strip on mobile) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
