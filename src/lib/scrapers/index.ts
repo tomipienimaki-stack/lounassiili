@@ -15,6 +15,11 @@ import { scrapeZerafiina } from './zerafiina';
 import { scrapeJumbowl } from './jumbowl';
 import { scrapeMyllytupa } from './myllytupa';
 import { scrapeBora } from './bora';
+import { scrapePompier } from './pompier';
+import { scrapeKantin } from './kantin';
+import { scrapeMarocco } from './marocco';
+import { scrapeSandro } from './sandro';
+import { scrapeLiemi } from './liemi';
 import { RestaurantMenu } from './utils';
 
 export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
@@ -35,6 +40,11 @@ export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
   jumbowl: scrapeJumbowl,
   myllytupa: scrapeMyllytupa,
   bora: scrapeBora,
+  pompier: scrapePompier,
+  kantin: scrapeKantin,
+  marocco: scrapeMarocco,
+  sandro: scrapeSandro,
+  liemi: scrapeLiemi,
 };
 
 export async function fetchAllMenus() {
