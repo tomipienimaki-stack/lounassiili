@@ -1,7 +1,10 @@
-import { scrapeFromLounaatInfo } from './lounaat-info';
+import { scrapeLounastajaWeek } from './lounastaja';
+import { RestaurantMenu } from './utils';
 
-const URL = 'https://www.lounaat.info/lounas/trattoria-pazzi/kangasala';
+const WIDGET_ID = '49gSiQAW6ZNmM8dpGOjg';
+const API_KEY = 'e08fc9fa-62d7-4309-b983-181feed999d6';
+const SOURCE = 'https://www.pazzi.fi/lounas/';
 
-export async function scrapePazzi() {
-  return scrapeFromLounaatInfo(URL);
+export async function scrapePazzi(): Promise<RestaurantMenu> {
+  return scrapeLounastajaWeek(WIDGET_ID, API_KEY, SOURCE);
 }

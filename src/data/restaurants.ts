@@ -69,6 +69,26 @@ export const restaurants: Restaurant[] = [
     url: 'https://zerafiina.fi/viikkolounas-kangasala/',
     location: 'kangasala'
   },
+  {
+    id: 'ninankeittio',
+    name: 'Lounaskievari (Ninan Keittiö)',
+    address: 'Alasenkuja 1, Kangasala',
+    distance: '',
+    price: '~13,20€',
+    hours: 'ma-to 10:30-13:45, pe 10:30-13:30',
+    url: 'https://www.ninankeittio.fi/kangasala-lounaskievari/',
+    location: 'kangasala'
+  },
+  {
+    id: 'makumaestro',
+    name: 'Lounasravintola MakuMaestro',
+    address: 'Hampuntie 1, Kangasala',
+    distance: '',
+    price: '~13,20€',
+    hours: 'ma-pe 10:30-13:30',
+    url: 'https://makumaestro.fi/#lounas',
+    location: 'kangasala'
+  },
   // Keskusta
   {
     id: 'jumbowl',

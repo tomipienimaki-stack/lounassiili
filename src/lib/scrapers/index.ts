@@ -20,6 +20,8 @@ import { scrapeKantin } from './kantin';
 import { scrapeMarocco } from './marocco';
 import { scrapeSandro } from './sandro';
 import { scrapeLiemi } from './liemi';
+import { scrapeNinanKeittio } from './ninankeittio';
+import { scrapeMakuMaestro } from './makumaestro';
 import { RestaurantMenu } from './utils';
 
 export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
@@ -45,6 +47,8 @@ export const scrapers: Record<string, () => Promise<RestaurantMenu>> = {
   marocco: scrapeMarocco,
   sandro: scrapeSandro,
   liemi: scrapeLiemi,
+  ninankeittio: scrapeNinanKeittio,
+  makumaestro: scrapeMakuMaestro,
 };
 
 export async function fetchAllMenus() {
