@@ -46,6 +46,7 @@ export async function scrapeLounastajaWeek(
   source: string,
 ): Promise<RestaurantMenu> {
   const url = `https://lounastaja.app/api/v1/widget/${apiKey}/${widgetId}`;
+  const todayString = new Date().toISOString().split('T')[0];
   try {
     const res = await axios.get<LounastajaResponse>(url, { timeout: 10_000 });
     const days = res.data?.data?.week?.days ?? [];
@@ -54,6 +55,7 @@ export async function scrapeLounastajaWeek(
       if (day.isHidden) continue;
       const dayKey = day.dayName?.fi?.toLowerCase().trim() ?? '';
       const short = SHORT_DAY[dayKey] ?? '';
+      const isToday = day.dateString === todayString;
       if (day.isClosed || !day.lunches?.length) continue;
       for (const lunch of day.lunches) {
         const title = lunch.title?.fi?.trim();
@@ -62,6 +64,7 @@ export async function scrapeLounastajaWeek(
         items.push({
           name: `${prefix}${title}`,
           diets: allergensToDiets(lunch.allergens),
+          today: isToday,
         });
       }
     }

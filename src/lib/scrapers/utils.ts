@@ -27,6 +27,7 @@ export function getTodayDayCaps() {
 export interface MenuItem {
   name: string;
   diets: string[];
+  today?: boolean;
 }
 
 export interface RestaurantMenu {

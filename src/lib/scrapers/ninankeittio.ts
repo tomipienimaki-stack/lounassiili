@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { cachedGet } from './cache';
-import { emptyMenu, extractItem, MenuItem, RestaurantMenu } from './utils';
+import { emptyMenu, extractItem, getTodayDayIndex, MenuItem, RestaurantMenu } from './utils';
 
 const URL = 'https://www.ninankeittio.fi/kangasala-lounaskievari/';
 
@@ -11,6 +11,9 @@ const DAY_SHORT: Record<string, string> = {
   TORSTAI: 'TO',
   PERJANTAI: 'PE',
 };
+
+// 0=mon..6=sun, mapped to short labels
+const SHORT_BY_INDEX = ['MA', 'TI', 'KE', 'TO', 'PE', 'LA', 'SU'];
 
 // Strips trailing prices like " 13,20€" or " 9,90€"
 function stripTrailingPrice(text: string): string {
@@ -23,6 +26,7 @@ export async function scrapeNinanKeittio(): Promise<RestaurantMenu> {
     const $ = cheerio.load(html);
     const items: MenuItem[] = [];
     let currentDay: string | null = null;
+    const todayShort = SHORT_BY_INDEX[getTodayDayIndex()];
 
     // Walk all <b> day headers and <li> dish items in document order
     $('b, li').each((_, el) => {
@@ -41,6 +45,7 @@ export async function scrapeNinanKeittio(): Promise<RestaurantMenu> {
       items.push({
         name: `${currentDay} – ${parsed.name}`,
         diets: parsed.diets,
+        today: currentDay === todayShort,
       });
     });
 
